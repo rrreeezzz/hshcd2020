@@ -2,11 +2,17 @@ package modes
 
 // Pickfirsts mode
 type Pickfirsts struct {
+	ModeBase
 }
 
-// NewPickFirsts allocates new pickfirsts
-func NewPickFirsts() *Pickfirsts {
+// NewPickfirsts allocates new pickfirsts
+func NewPickfirsts() *Pickfirsts {
 	return &Pickfirsts{}
+}
+
+// Name returns name of mode
+func (m *Pickfirsts) Name() string {
+	return "Pickfirsts"
 }
 
 // Run runs
@@ -22,5 +28,5 @@ func (m *Pickfirsts) Run(max, num int, pizSizes []int) (int, []int) {
 		pizOut = append(pizOut, i)
 	}
 
-	return len(pizOut), pizOut
+	return r, pizOut
 }
