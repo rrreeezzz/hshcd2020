@@ -8,4 +8,6 @@ type Mode interface {
 
 	// Name returns name of the mode
 	Name() string
+
+	//TODO: time function
 }

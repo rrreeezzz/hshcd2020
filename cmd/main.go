@@ -12,27 +12,26 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"text/tabwriter"
 
 	"github.com/rrreeezzz/hshcd2020/modes"
 )
 
 func usage() {
 	fmt.Println("./main -file file -mode mode\n" +
-		"   MODES: pickfirst,")
+		"   MODES: pickfirsts,picklasts,all")
 	os.Exit(0)
 }
 
 // printTab print results tab-separated style
-func printHeader() *tabwriter.Writer {
-	w := new(tabwriter.Writer)
-	w.Init(os.Stdout, 0, 8, 2, ' ', tabwriter.TabIndent)
-	fmt.Fprintln(w, "Mode\tPizzas\tSlices\tDiversity\tEfficiency")
-	return w
+func printHeader() {
+	fmt.Println("Mode name\t\tPizzas\t\tSlices\t\tDiversity\tEfficiency\tVerification")
 }
 
-func printResultRow(w *tabwriter.Writer, name string, pizs, slices int, density, efficiency float64) {
-	fmt.Fprintln(w, fmt.Sprintf("%v\t%v\t%v\t%.4f\t%.4f", name, pizs, slices, density, efficiency))
+func printResultRow(name string, max, num, numSlices int, selectedPizs []int) {
+	lenPizs := len(selectedPizs)
+	density := (100 * float64(lenPizs)) / float64(num)
+	efficiency := (100 * float64(numSlices)) / float64(max)
+	fmt.Println(fmt.Sprintf("%10v\t\t%v\t\t%v\t\t%.4f\t\t%.4f\t\t", name, lenPizs, numSlices, density, efficiency))
 }
 
 func readAndParseData(fname string) (int, int, []int, error) {
@@ -88,7 +87,7 @@ func readAndParseData(fname string) (int, int, []int, error) {
 func main() {
 
 	fname := flag.String("file", "", "file")
-	mode := flag.String("mode", "", "mode: pickfirsts, picklasts, all")
+	mode := flag.String("mode", "", "mode: pickfirsts, picklasts, gen, all")
 	full := flag.Bool("full", false, "show selected pizzas list")
 	flag.Parse()
 
@@ -103,6 +102,8 @@ func main() {
 		m = modes.NewPickfirsts()
 	case "picklasts":
 		m = modes.NewPicklasts()
+	case "gen":
+		m = modes.NewGen()
 	case "all":
 		all = true
 	default:
@@ -118,31 +119,24 @@ func main() {
 	fmt.Printf("Number of available pizzas: %v\n", num)
 	fmt.Println()
 
-	// TODO: delete duplicate code
-	// TODO: incremental print, get rid of tabwriter
-	w := printHeader()
+	printHeader()
+	//TODO: tests if selectedPizs are in pizs
 	if all {
 		for _, m := range availablesModes {
 			numSlices, selectedPizs := m.Run(max, num, pizs)
-			lenPizs := len(selectedPizs)
-			density := (100 * float64(lenPizs)) / float64(num)
-			efficiency := (100 * float64(numSlices)) / float64(max)
-			printResultRow(w, m.Name(), lenPizs, numSlices, density, efficiency)
+			printResultRow(m.Name(), max, num, numSlices, selectedPizs)
 		}
 	} else {
 		numSlices, selectedPizs := m.Run(max, num, pizs)
-		lenPizs := len(selectedPizs)
-		density := (100 * float64(lenPizs)) / float64(num)
-		efficiency := (100 * float64(numSlices)) / float64(max)
-		printResultRow(w, m.Name(), lenPizs, numSlices, density, efficiency)
+		printResultRow(m.Name(), max, num, numSlices, selectedPizs)
 		if *full {
 			fmt.Printf("Selected pizzas: %v\n", selectedPizs)
 		}
 	}
-	w.Flush()
 }
 
 var availablesModes = []modes.Mode{
 	&modes.Pickfirsts{},
 	&modes.Picklasts{},
+	&modes.Gen{},
 }
