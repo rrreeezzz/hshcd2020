@@ -104,6 +104,8 @@ func main() {
 		m = modes.NewPicklasts()
 	case "gen":
 		m = modes.NewGen()
+	case "gensec":
+		m = modes.NewGenSec()
 	case "all":
 		all = true
 	default:
@@ -139,4 +141,5 @@ var availablesModes = []modes.Mode{
 	&modes.Pickfirsts{},
 	&modes.Picklasts{},
 	&modes.Gen{},
+	&modes.GenSec{},
 }

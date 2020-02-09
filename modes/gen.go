@@ -70,6 +70,7 @@ func (m *Gen) Run(max, num int, pizSizes []int) (int, []int) {
 		prevGen = nextGen
 	}
 
+	// Select best tuple (slices, [pizzas])
 	slices = 0
 	for sum, idx := range nextGen {
 		if sum > slices {
