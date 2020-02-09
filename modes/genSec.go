@@ -93,11 +93,9 @@ func (m *GenSec) Run(max, num int, pizSizes []int) (int, []int) {
 
 	finalTuple := &bestTuple{}
 	for grs := 0; grs < cpus; grs++ {
-		select {
-		case tmp := <-m.rchan:
-			finalTuple.slices += tmp.slices
-			finalTuple.pizzOut = append(finalTuple.pizzOut, tmp.pizzOut...)
-		}
+		tmp := <-m.rchan
+		finalTuple.slices += tmp.slices
+		finalTuple.pizzOut = append(finalTuple.pizzOut, tmp.pizzOut...)
 	}
 
 	// TODO: refactor, uses goroutines, channels... make it faster
