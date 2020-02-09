@@ -2,7 +2,6 @@ package modes
 
 import (
 	"runtime"
-	"sync"
 )
 
 // GenSec mode
@@ -29,16 +28,14 @@ func (m *GenSec) Name() string {
 	return "GenSec"
 }
 
-func (m *GenSec) worker(wg *sync.WaitGroup, max, num, start, step int, pizSizes []int) {
-	defer wg.Done()
-
+func (m *GenSec) worker(max, num, start, step int, pizSizes []int) {
 	// use a map, no duplicate this way
 	prevGen := make(map[int][]int)
 	nextGen := make(map[int][]int)
 	// generation 1 + steps
 	newPizSizes := []int{}
 	for i := start; i < num; i += step {
-		newPizSizes = append(newPizSizes, i)
+		newPizSizes = append(newPizSizes, pizSizes[i])
 		if _, ok := prevGen[pizSizes[i]]; ok {
 			continue
 		}
@@ -86,26 +83,21 @@ func (m *GenSec) worker(wg *sync.WaitGroup, max, num, start, step int, pizSizes 
 // Run runs
 func (m *GenSec) Run(max, num int, pizSizes []int) (int, []int) {
 
-	var wg sync.WaitGroup
-
 	// Set GOMAXPROCS
-	cpus := runtime.NumCPU()
+	cpus := 4
 	runtime.GOMAXPROCS(cpus)
 
 	for grs := 0; grs < cpus; grs++ {
-		wg.Add(1)
-		go m.worker(&wg, max, num, grs, cpus, pizSizes)
+		go m.worker(max/cpus, num, grs, cpus, pizSizes)
 	}
 
-	wg.Wait()
-
 	finalTuple := &bestTuple{}
-	select {
-	case tmp := <-m.rchan:
-		finalTuple.slices += tmp.slices
-		finalTuple.pizzOut = append(finalTuple.pizzOut, tmp.pizzOut...)
-	default:
-		break
+	for grs := 0; grs < cpus; grs++ {
+		select {
+		case tmp := <-m.rchan:
+			finalTuple.slices += tmp.slices
+			finalTuple.pizzOut = append(finalTuple.pizzOut, tmp.pizzOut...)
+		}
 	}
 
 	// TODO: refactor, uses goroutines, channels... make it faster
