@@ -99,13 +99,13 @@ func main() {
 	var all bool
 	switch *mode {
 	case "pickfirsts":
-		m = modes.NewPickfirsts()
+		m = &modes.Pickfirsts{}
 	case "picklasts":
-		m = modes.NewPicklasts()
+		m = &modes.Picklasts{}
 	case "gen":
-		m = modes.NewGen()
+		m = &modes.Gen{}
 	case "gensec":
-		m = modes.NewGenSec()
+		m = &modes.GenSec{}
 	case "all":
 		all = true
 	default:
@@ -125,10 +125,12 @@ func main() {
 	//TODO: tests if selectedPizs are in pizs
 	if all {
 		for _, m := range availablesModes {
+			m.Init()
 			numSlices, selectedPizs := m.Run(max, num, pizs)
 			printResultRow(m.Name(), max, num, numSlices, selectedPizs)
 		}
 	} else {
+		m.Init()
 		numSlices, selectedPizs := m.Run(max, num, pizs)
 		printResultRow(m.Name(), max, num, numSlices, selectedPizs)
 		if *full {

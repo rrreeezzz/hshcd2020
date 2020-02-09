@@ -5,9 +5,9 @@ type Pickfirsts struct {
 	ModeBase
 }
 
-// NewPickfirsts allocates new pickfirsts
-func NewPickfirsts() *Pickfirsts {
-	return &Pickfirsts{}
+// Init fake for base struct
+func (m *Pickfirsts) Init() {
+	return
 }
 
 // Name returns name of mode

@@ -11,3 +11,8 @@ type ModeBase struct {
 func (m *ModeBase) Name() string {
 	return reflect.TypeOf(m).String()
 }
+
+// Init fake for base struct
+func (m *ModeBase) Init() {
+	return
+}

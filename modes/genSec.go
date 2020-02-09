@@ -16,11 +16,10 @@ type bestTuple struct {
 	pizzOut []int
 }
 
-// NewGenSec allocates new GenSec
-func NewGenSec() *GenSec {
-	return &GenSec{
-		rchan: make(chan bestTuple),
-	}
+// Init fake for base struct
+func (m *GenSec) Init() {
+	m.rchan = make(chan bestTuple)
+	return
 }
 
 // Name returns name of mode

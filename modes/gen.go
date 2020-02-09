@@ -5,9 +5,9 @@ type Gen struct {
 	ModeBase
 }
 
-// NewGen allocates new Gen
-func NewGen() *Gen {
-	return &Gen{}
+// Init fake for base struct
+func (m *Gen) Init() {
+	return
 }
 
 // Name returns name of mode

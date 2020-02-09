@@ -10,4 +10,5 @@ type Mode interface {
 	Name() string
 
 	//TODO: time function
+	Init()
 }
